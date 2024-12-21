@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Models\Book;
 class BookController extends Controller
 {
     /**
@@ -12,15 +12,11 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
+        
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('books.create');
     }
 
     /**
@@ -28,7 +24,7 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**

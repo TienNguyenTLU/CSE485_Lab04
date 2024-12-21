@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Reader;
 use Illuminate\Http\Request;
 
 class ReaderController extends Controller
@@ -12,7 +13,8 @@ class ReaderController extends Controller
      */
     public function index()
     {
-        //
+        $reader = Reader::all();
+        return view('books.index',compact('readers'));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Borrow;
 use Illuminate\Http\Request;
 
 class BorrowController extends Controller
@@ -12,7 +13,11 @@ class BorrowController extends Controller
      */
     public function index()
     {
-        //
+        $borrows = Borrow::with('book')->get();
+        $borrows = Borrow::with('book')->paginate(5);
+        $borrows = Borrow::with('reader')->get();
+        $borrows = Borrow::with('reader')->paginate(5);
+        return view('borrows.index',compact('borrows'));
     }
 
     /**
@@ -20,7 +25,7 @@ class BorrowController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -28,7 +33,7 @@ class BorrowController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
     }
 
     /**
