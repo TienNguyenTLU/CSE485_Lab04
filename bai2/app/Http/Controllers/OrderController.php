@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
-use App\Models\Customer;
+
 
 
 class OrderController extends Controller
@@ -14,7 +14,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $theses = Order::with('Customer')->paginate(5); 
+        $orders = Order::with('orders')->paginate(5); 
         return view('orders.index', compact('orders'));
     }
 
@@ -23,8 +23,8 @@ class OrderController extends Controller
      */
     public function create()
     {
-        $ustomers = Customer::all();
-        return view('orders.create', compact('Customers'));
+        $oders = Order::all();
+        return view('orders.create', compact('orders'));
     }
 
     /**
@@ -48,7 +48,7 @@ class OrderController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('order_details.index');
     }
 
     /**
@@ -56,7 +56,7 @@ class OrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        
     }
 
     /**
@@ -64,6 +64,8 @@ class OrderController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $orders = Order::findOrFail($id);
+        $orders->delete();
+        return redirect()->route('orders.index')->with('success', 'Đồ án đã được xóa thành công!');
     }
 }
