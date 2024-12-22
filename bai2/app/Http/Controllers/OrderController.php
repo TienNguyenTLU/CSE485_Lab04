@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Order;
+use App\Models\Customer;
+
 
 class OrderController extends Controller
 {
@@ -11,7 +14,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $theses = Order::with('Customer')->paginate(5); 
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -19,7 +23,8 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        $ustomers = Customer::all();
+        return view('orders.create', compact('Customers'));
     }
 
     /**
