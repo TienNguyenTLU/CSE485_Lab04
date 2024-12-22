@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Order_DetailController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,4 +12,4 @@ Route::get('/', function () {
 Route::resource('products', ProductController::class);
 Route::resource('customers', CustomerController::class);
 Route::resource('orders', OrderController::class);
-Route::resource('order_details', OrderController::class);
+Route::resource('order_details', Order_DetailController::class);
