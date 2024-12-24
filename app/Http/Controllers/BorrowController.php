@@ -93,4 +93,13 @@ class BorrowController extends Controller
         $borrow->update($request->all());
         return redirect()->route('borrows.index')->with('success', 'Cập nhật phiếu mượn thành công!');
     }
+
+    public function destroy($id){
+        $borrow = Borrow::find($id);
+        if($borrow){
+            $borrow->delete();
+        }
+
+        return redirect()->route('borrows.index')->with('success', 'Xóa phiếu mượn thành công!');
+    }
 }

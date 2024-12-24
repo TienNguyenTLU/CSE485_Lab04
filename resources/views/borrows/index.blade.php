@@ -44,9 +44,9 @@
                         <a href="{{ route('borrows.edit', $borrow->id)}}" class="text-yellow-600">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a href="" class="text-red-600">
+                        <button type="button" class="btn btn-link text-red-600" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setDeleteAction('{{ route('borrows.destroy', $borrow->id)}}')">
                             <i class="fa-solid fa-trash"></i>
-                        </a>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -60,4 +60,13 @@
     </div>
 </div>
 
+@include('borrows.destroy');
+
 @endsection
+
+<script>
+    function setDeleteAction(actionUrl) {
+        const deleteForm = document.getElementById('deleteForm');
+        deleteForm.action = actionUrl;
+    }
+</script>
