@@ -16,12 +16,29 @@ class Order_DetailController extends Controller
         return view('order_details.index', compact('order_details'));
     }
 
-    public function create()
-    {
-        $customers = Customer::all();
-        $products = Product::all();
-        return view('order_details.create', compact('customers', 'products'));
+    public function create(Request $request)
+{
+
+    $product = Product::find($request->product_id);
+    $customer = Customer::find($request->customer_id);
+    $order = Order::find($request->order_id);
+
+    if (!$product || !$customer || !$order) {
+        return redirect()->route('order_details.create')->with('error', 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
     }
+
+    $order_detail = Order_Detail::create([
+        'order_id' => $request->order_id,
+        'product_id' => $request->product_id,
+        'quantity' => $request->quantity,
+        'customer_id' => $request->customer_id,
+        'order_date' => $request->order_date,
+        'status' => $request->status
+    ]);
+
+    return redirect()->route('order_details.index')->with('success', 'Tạo chi tiết đơn hàng thành công.');
+}
+
 
     public function store(Request $request)
     {
@@ -32,7 +49,6 @@ class Order_DetailController extends Controller
         ]);
 
         $product = Product::find($request->product_id);
-        $product->decrement('quantity', $request->quantity);
 
         return redirect()->route('order_details.index');
     }
@@ -48,35 +64,47 @@ class Order_DetailController extends Controller
         $order_detail = Order_Detail::findOrFail($id);
         $customers = Customer::all();
         $products = Product::all();
-
         return view('order_details.edit', compact('order_detail', 'customers', 'products'));
     }
 
     public function update(Request $request, $id)
-    {
-        $order_detail = Order_Detail::findOrFail($id);
+{
 
-        $order_detail->update([
-            'order_id' => $request->order_id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity
-        ]);
+    $order_detail = Order_Detail::findOrFail($id);
+    $product = Product::find($request->product_id);
+    $customer = Customer::find($request->customer_id);
+    
 
-        $product = Product::find($request->product_id);
-        $old_quantity = $order_detail->getOriginal('quantity');
-        $product->increment('quantity', $old_quantity - $request->quantity);
+    $order_detail->update([
+        'product_id' => $request->product_id,
+        'quantity' => $request->return_quantity,
+        'customer_id' => $request->customer_id,
+        'order_date' => $request->return_order_date,
+        'status' => $request->return_status
+    ]);
+    
+ 
+    $order = $order_detail->order; 
+    
 
-        return redirect()->route('order_details.index');
-    }
+    $order->update([
+        'customer_id' => $request->customer_id, 
+        'order_date' => $request->return_order_date,
+        'status' => $request->return_status
+    ]);
+    
+    $old_quantity = $order_detail->getOriginal('quantity');
+    $product->increment('quantity', $old_quantity - $request->return_quantity);  
+    return redirect()->route('order_details.index')->with('success', 'Cập nhật thành công');
+}
+
 
     public function destroy($id)
     {
+        
         $order_detail = Order_Detail::findOrFail($id);
-        $product = Product::find($order_detail->product_id);
-        $product->increment('quantity', $order_detail->quantity);
-
         $order_detail->delete();
-
+      
         return redirect()->route('order_details.index');
     }
 }
