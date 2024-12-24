@@ -41,7 +41,7 @@
                         <a href="{{ route('borrows.show', $borrow->id)}}" class="text-blue-600">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <a href="" class="text-yellow-600">
+                        <a href="{{ route('borrows.edit', $borrow->id)}}" class="text-yellow-600">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
                         <a href="" class="text-red-600">
