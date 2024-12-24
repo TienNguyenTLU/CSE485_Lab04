@@ -6,69 +6,77 @@ use Illuminate\Http\Request;
 use App\Models\Order_Detail;
 use App\Models\Product;
 use App\Models\Customer;
+use App\Models\Order;
 
 class Order_DetailController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        // If you have a relationship like 'order' or another relationship on Order_Detail, 
-        // load it accordingly. Assuming there's no such relation in this case:
-        $order_details = Order_Detail::paginate(5); 
+        $order_details = Order_Detail::with('order', 'product')->paginate(5);
         return view('order_details.index', compact('order_details'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        // Logic for creating an order detail goes here
+        $customers = Customer::all();
+        $products = Product::all();
+        return view('order_details.create', compact('customers', 'products'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Logic for storing the new order detail goes here
+        Order_Detail::create([
+            'order_id' => $request->order_id,
+            'product_id' => $request->product_id,
+            'quantity' => $request->quantity
+        ]);
+
+        $product = Product::find($request->product_id);
+        $product->decrement('quantity', $request->quantity);
+
+        return redirect()->route('order_details.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        // Logic for displaying a single order detail goes here
+        $order_detail = Order_Detail::with('order', 'product')->findOrFail($id);
+        return view('order_details.show', compact('order_detail'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        $order_details = Order_Detail::findOrFail($id);
+        $order_detail = Order_Detail::findOrFail($id);
         $customers = Customer::all();
         $products = Product::all();
 
-        return view('order_details.edit', compact('order_details', 'customers', 'products'));
+        return view('order_details.edit', compact('order_detail', 'customers', 'products'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        // Logic for updating the order detail goes here
+        $order_detail = Order_Detail::findOrFail($id);
+
+        $order_detail->update([
+            'order_id' => $request->order_id,
+            'product_id' => $request->product_id,
+            'quantity' => $request->quantity
+        ]);
+
+        $product = Product::find($request->product_id);
+        $old_quantity = $order_detail->getOriginal('quantity');
+        $product->increment('quantity', $old_quantity - $request->quantity);
+
+        return redirect()->route('order_details.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        // Logic for deleting the order detail goes here
+        $order_detail = Order_Detail::findOrFail($id);
+        $product = Product::find($order_detail->product_id);
+        $product->increment('quantity', $order_detail->quantity);
+
+        $order_detail->delete();
+
+        return redirect()->route('order_details.index');
     }
 }
