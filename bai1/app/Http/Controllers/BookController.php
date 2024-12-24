@@ -24,7 +24,31 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'author' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'category' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'year' => ['required', 'digits:4', 'integer'],
+            'quantity' => ['required', 'integer', 'min:0'],
+        ],
+        [
+            'name.required' => 'Tên sách không được để trống.',
+            'name.regex' => 'Tên sách không được chứa ký tự không hợp lệ.',
+            'author.required' => 'Tên tác giả không được để trống.',
+            'author.regex' => 'Tên tác giả không được chứa ký tự không hợp lệ.',
+            'category.required' => 'Thể loại không được để trống.',
+            'category.regex' => 'Thể loại không được chứa ký tự không hợp lệ.',
+            'year.required' => 'Năm xuất bản không được để trống.',
+            'year.digits' => 'Năm xuất bản phải là 4 chữ số.',
+            'year.integer' => 'Năm xuất bản phải là số nguyên.',
+            'quantity.required' => 'Số lượng không được để trống.',
+            'quantity.integer' => 'Số lượng phải là số nguyên.',
+            'quantity.min' => 'Số lượng phải lớn hơn 0.',
+        ]);
         
+        $book = $request->all();
+        Book::create($book);
+        return redirect()->route('books.index')->with('success', 'Thêm sách mới thành công!');
     }
 
     /**
@@ -32,7 +56,8 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $book = Book::find($id);
+        return view('books.show', compact('book'));
     }
 
     /**
@@ -40,7 +65,8 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $book = Book::find($id);
+        return view('books.edit', compact('book'));
     }
 
     /**
@@ -48,7 +74,30 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'author' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'category' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'year' => ['required', 'digits:4', 'integer'],
+            'quantity' => ['required', 'integer', 'min:0'],
+        ],
+        [
+            'name.required' => 'Tên sách không được để trống.',
+            'name.regex' => 'Tên sách không được chứa ký tự không hợp lệ.',
+            'author.required' => 'Tên tác giả không được để trống.',
+            'author.regex' => 'Tên tác giả không được chứa ký tự không hợp lệ.',
+            'category.required' => 'Thể loại không được để trống.',
+            'category.regex' => 'Thể loại không được chứa ký tự không hợp lệ.',
+            'year.required' => 'Năm xuất bản không được để trống.',
+            'year.digits' => 'Năm xuất bản phải là 4 chữ số.',
+            'year.integer' => 'Năm xuất bản phải là số nguyên.',
+            'quantity.required' => 'Số lượng không được để trống.',
+            'quantity.integer' => 'Số lượng phải là số nguyên.',
+            'quantity.min' => 'Số lượng phải lớn hơn 0.',
+        ]);        
+        $book = Book::find($id);
+        $book->update($request->all());
+        return redirect()->route('books.index')->with('success', 'Cập nhật sách thành công!');
     }
 
     /**
@@ -56,6 +105,10 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $book = Book::find($id);
+        if($book){
+            $book->delete();
+        }
+        return redirect()->route('books.index')->with('success', 'Xóa sách thành công!');
     }
 }
