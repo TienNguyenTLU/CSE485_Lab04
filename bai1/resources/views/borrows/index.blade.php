@@ -1,94 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
+@extends('layouts.app')
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-<body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Library Management</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Dropdown
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-              </li>
-            </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-          </div>
-        </div>
-      </nav>
+@section('content')
+<div class="container mx-auto px-6">
+    <h2 class="text-2xl font-bold mb-4">Danh sách phiếu mượn</h2>
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <span>{{ session('success') }}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
 
-      <table class="table">
+    <a href="{{ route('borrows.create')}}" class="px-4 py-2 bg-green-500 text-white rounded-md mb-4">Thêm phiếu mượn</a>
+    <div class="w-full overflow-hidden rounded-lg shadow-xs">
+        <div class="w-full overflow-x-auto">
+        <table class="w-full whitespace-no-wrap">
         <thead>
-          <tr>
-            <th scope="col">STT</th>
-            <th scope="col">ID</th>
-            <th scope="col">Tên sách</th>
-            <th scope="col">Đọc giả</th>
-            <th scope="col">Ngày mượn</th>
-            <th scope="col">Ngày trả </th>
-            <th scope="col">Hành động</th>
-          </tr>
+            <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
+                <th class="px-4 py-3 text-left">STT</th>
+                <th class="px-4 py-3 text-left">Tên người mượn</th>
+                <th class="px-4 py-3 text-left">Tên sách</th>
+                <th class="px-4 py-3 text-center">Tên tác giả</th>
+                <th class="px-4 py-3 text-center">Ngày mượn sách</th>
+                <th class="px-4 py-3 text-center">Ngày trả sách</th>
+                <th class="px-4 py-3 text-center">Trạng thái</th>
+                <th class="px-4 py-3 text-center">Hành Động</th>
+            </tr>
         </thead>
-        @php
-            $i = 0;
-        @endphp
-        <tbody>
-            @foreach ($borrows as $item)
-            <tr>
-                <td>{{$i}}</td>
-                <td> {{$item->id}}</td>
-                <td>{{$item->book->name}}</td>
-                <td>{{$item->reader->name}}</td>
-                <td>{{$item->borrow_date}}</td>
-                <td>{{$item->return_date}}</td>
-                <td>
-                  <button type="button" class="btn btn-danger"><i class="bi-pencil"></i></button>
-                  <button type="button" class="btn btn-primary"> <i class="bi-trash"></i></button>
+        <tbody class="bg-white divide-y">
+            @foreach ($borrows as $borrow)
+            <tr class="text-gray-700">
+                <td class="px-4 py-3 text-left">{{ $borrow->id }}</td>
+                <td class="px-4 py-3 text-left">{{ $borrow->reader->name }}</td>
+                <td class="px-4 py-3 text-left">{{ $borrow->book->name }}</td>
+                <td class="px-4 py-3 text-left">{{ $borrow->book->author }}</td>
+                <td class="px-4 py-3 text-left">{{ $borrow->borrow_date }}</td>
+                <td class="px-4 py-3 text-center">{{ $borrow->return_date }}</td>
+                <td class="px-4 py-3 text-center"> @if($borrow->status == 0) Chưa trả @else Đã trả @endif</td>
+                <td class="px-4 py-3 text-center">
+                    <div class="flex justify-center items-center space-x-3">
+                        <a href="{{ route('borrows.show', $borrow->id)}}" class="text-blue-600">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <a href="{{ route('borrows.edit', $borrow->id)}}" class="text-yellow-600">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <button type="button" class="btn btn-link text-red-600" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" onclick="setDeleteAction('{{ route('borrows.destroy', $borrow->id)}}')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
-            
-            @php
-                $i++;
-            @endphp
             @endforeach
-        </tbody>
-        
-      </table>
-      <div class="d-flex justify-content-center">
-        {{
-          $borrows->links('pagination::bootstrap-5')
-        }}
-      </div>
-    </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</html>
+            </tbody>
+        </table>
+        </div>
+    </div>
+    <div class="mt-4">
+        {{ $borrows->links() }}
+    </div>
+</div>
+
+@include('borrows.destroy');
+
+@endsection
+
+<script>
+    function setDeleteAction(actionUrl) {
+        const deleteForm = document.getElementById('deleteForm');
+        deleteForm.action = actionUrl;
+    }
+</script>

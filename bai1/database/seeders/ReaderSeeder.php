@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Reader;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use App\Models\Reader;
+
 class ReaderSeeder extends Seeder
 {
     /**
@@ -14,16 +15,13 @@ class ReaderSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create();
-        for($i=0;$i<20;$i++)
-        {
-            Reader::create(
-                [
-                    'name'=>$faker->name,
-                    'birthday'=>$faker->date(),
-                    'address'=>$faker->address,
-                    'phone'=>$faker->phoneNumber,  
-                ]
-                );
+        foreach(range(1, 10) as $i){
+            Reader::create([
+                'name' => $faker->name,
+                'birthday' => $faker->date(),
+                'address' => $faker->address,
+                'phone' => $faker->phoneNumber,
+            ]);
         }
     }
 }

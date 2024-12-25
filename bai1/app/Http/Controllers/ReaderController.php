@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Reader;
 use Illuminate\Http\Request;
+use App\Models\Reader;
 
 class ReaderController extends Controller
 {

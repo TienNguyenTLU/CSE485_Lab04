@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Borrow;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
-use Illuminate\Support\Facades\DB;
+use App\Models\Borrow;
+use App\Models\Book;
+use App\Models\Reader;
+
 class BorrowSeeder extends Seeder
 {
     /**
@@ -14,20 +16,18 @@ class BorrowSeeder extends Seeder
      */
     public function run(): void
     {
-        $book_id = DB::table('books')->pluck('id')->toArray();
-        $reader_id = DB::table('readers')->pluck('id')->toArray();
         $faker = Faker::create();
-        for($i=0;$i<20;$i++)
-        {
-            Borrow::create(
-                [
-                    'book_id' => $book_id[array_rand($book_id)],
-                    'reader_id' => $reader_id[array_rand($reader_id)],
-                    'return_date' => $faker->date(),
-                    'borrow_date' => $faker->date(),
-                    'status'=> $faker->boolean()
-                ]
-                );
+        $bookId = Book::pluck('id')->toArray();
+        $readerId = Reader::pluck('id')->toArray();
+
+        foreach(range(1, 10) as $i){
+            Borrow::create([
+                'reader_id' => $faker->randomElement($readerId),
+                'book_id' => $faker->randomElement($bookId),
+                'borrow_date' => $faker->dateTimeBetween('-1 month', 'now'),
+                'return_date' => $faker->dateTimeBetween('now', '+1 month'),
+                'status' => $faker->boolean,
+            ]);
         }
     }
 }

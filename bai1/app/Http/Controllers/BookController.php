@@ -2,26 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Book;
+
 class BookController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        
+        $books = Book::orderBy('created_at', 'desc')->paginate(5);
+        return view('books.index', compact('books'));
     }
+
     public function create()
     {
         return view('books.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -51,28 +47,13 @@ class BookController extends Controller
         return redirect()->route('books.index')->with('success', 'Thêm sách mới thành công!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        $book = Book::find($id);
-        return view('books.show', compact('book'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit($id)
     {
         $book = Book::find($id);
         return view('books.edit', compact('book'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
@@ -100,10 +81,7 @@ class BookController extends Controller
         return redirect()->route('books.index')->with('success', 'Cập nhật sách thành công!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         $book = Book::find($id);
         if($book){
@@ -111,4 +89,10 @@ class BookController extends Controller
         }
         return redirect()->route('books.index')->with('success', 'Xóa sách thành công!');
     }
+
+    public function show($id){
+        $book = Book::find($id);
+        return view('books.show', compact('book'));
+    }
 }
+

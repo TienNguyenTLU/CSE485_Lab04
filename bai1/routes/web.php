@@ -1,14 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\ReaderController;
-use App\Models\Book;
-use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', function () {
     return view('welcome');
 });
-Route::resource('reader', ReaderController::class);
-Route::resource('book', BookController::class);
-Route::resource('borrow', BorrowController::class);
+
+Route::resource('books', BookController::class);
+Route::resource('readers', ReaderController::class);
+Route::resource('borrows', BorrowController::class);
