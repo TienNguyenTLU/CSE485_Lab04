@@ -8,60 +8,78 @@ use Illuminate\Http\Request;
 
 class ReaderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $reader = Reader::all();
-        return view('books.index',compact('readers'));
+        $readers = Reader::orderBy('created_at', 'desc')->paginate(5);
+        return view('readers.index', compact('readers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('readers.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'birthday' => ['required', 'date'],
+            'address' => ['required'],
+            'phone' => ['required', 'regex:/^[0-9]+$/'],
+        ],[
+            'name.required' => 'Tên không được để trống.',
+            'name.regex' => 'Tên chỉ được chứa chữ cái, khoảng trắng và không chứa ký tự đặc biệt.',
+            'birthday.required' => 'Ngày sinh không được để trống.',
+            'birthday.date' => 'Ngày sinh không đúng định dạng.',
+            'address.required' => 'Địa chỉ không được để trống.',
+            'phone.required' => 'Số điện thoại không được để trống.',
+            'phone.regex' => 'Số điện thoại chỉ được chứa các chữ số.',
+        ]);
+
+        $reader = $request->all();
+        Reader::create($reader);
+        return redirect()->route('readers.index')->with('success', 'Thêm độc giả thành công!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $reader = Reader::find($id);
+        return view('readers.show', compact('reader'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        //
+        $reader = Reader::find($id);
+        return view('readers.edit', compact('reader'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'regex:/^[\p{L}\p{N}\s\.,-]+$/u'],
+            'birthday' => ['required', 'date'],
+            'address' => ['required'],
+            'phone' => ['required', 'regex:/^[0-9]+$/'],
+        ],[
+            'name.required' => 'Tên không được để trống.',
+            'name.regex' => 'Tên chỉ được chứa chữ cái, khoảng trắng và không chứa ký tự đặc biệt.',
+            'birthday.required' => 'Ngày sinh không được để trống.',
+            'birthday.date' => 'Ngày sinh không đúng định dạng.',
+            'address.required' => 'Địa chỉ không được để trống.',
+            'phone.required' => 'Số điện thoại không được để trống.',
+            'phone.regex' => 'Số điện thoại chỉ được chứa các chữ số.',
+        ]);
+        $reader = Reader::find($id);
+        $reader->update($request->all());
+        return redirect()->route('readers.index')->with('success', 'Cập nhật độc giả thành công!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $reader = Reader::find($id);
+        if($reader){
+            $reader->delete();
+        }
+        return redirect()->route('readers.index')->with('success', 'Xóa thành công!');
     }
 }
